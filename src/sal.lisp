@@ -89,11 +89,8 @@
            `((setf ,@(loop :for k :being :each :hash-key :of hash-table :using
                                 (:hash-value v)
                            :collect `(gethash ,(object-form k) ,var)
-                           :collect (cond
-                                      ((let ((seen? (assoc v *known-form*)))
-                                         (when seen?
-                                           (cdr seen?))))
-                                      (t (object-form v)))))))
+                           :collect (or (cdr (assoc v *known-form*))
+                                        (object-form v))))))
        ,var)))
 
 ;;; STANDARD-CLASS
@@ -111,14 +108,12 @@
                                    :if (slot-boundp object name)
                                      :if initargs
                                        :collect (car initargs)
-                                       :and :collect (let* ((v
-                                                             (slot-value object
-                                                                         name))
-                                                            (seen?
+                                       :and :collect (let ((v
+                                                            (slot-value object
+                                                                        name)))
+                                                       (or (cdr
                                                              (assoc v
-                                                                    *known-form*)))
-                                                       (if seen?
-                                                           (cdr seen?)
+                                                                    *known-form*))
                                                            (form v)))))))
        ,var)))
 
@@ -138,14 +133,12 @@
                                     :if (slot-boundp object name)
                                       :if initargs
                                         :collect (car initargs)
-                                        :and :collect (let* ((v
-                                                              (slot-value
-                                                                object name))
-                                                             (seen?
+                                        :and :collect (let ((v
+                                                             (slot-value object
+                                                                         name)))
+                                                        (or (cdr
                                                               (assoc v
-                                                                     *known-form*)))
-                                                        (if seen?
-                                                            (cdr seen?)
+                                                                     *known-form*))
                                                             (form v)))))))
        ,var)))
 
