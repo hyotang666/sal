@@ -203,8 +203,9 @@
         ((:circle *print-circle*) *print-circle*)
         ((:gensym *print-gensym*) *print-gensym*)
         ((:readably *print-readably*) *print-readably*))
-  (pprint-logical-block (*standard-output* nil :prefix "#.")
-    (write (object-form object))))
+  (let (*known-form*)
+    (pprint-logical-block (*standard-output* nil :prefix "#.")
+      (write (object-form object)))))
 
 ;;;; LOAD-OBJECT
 
