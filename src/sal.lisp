@@ -177,6 +177,29 @@
        ,var)))
 
 ;;; ARRAY
+
+(defun array-contents-form (array)
+  (labels ((rec (dimensions acc)
+             (if (endp (cdr dimensions))
+                 `(list
+                    ,@(loop :for i :upfrom 0 :below (car dimensions)
+                            :collect (form (apply #'aref array
+                                                  (revappend acc (list i))))))
+                 `(list
+                    ,@(loop :for i :upfrom 0 :below (car dimensions)
+                            :collect (rec (cdr dimensions) (cons i acc)))))))
+    (rec (array-dimensions array) nil)))
+
+(defmethod object-form ((array array))
+  (let ((var (gensym "ARRAY")))
+    (pushnew (cons array var) *known-form* :key #'car)
+    `(let ((,var
+            (make-array ',(array-dimensions array)
+                        :element-type ',(array-element-type array)
+                        :adjustable ,(adjustable-array-p array)
+                        :initial-contents ,(array-contents-form array))))
+       ,var)))
+
 ;;; STREAM
 ;;;; WRITE-OBJECT
 
