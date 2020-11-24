@@ -182,8 +182,9 @@
              (if (endp (cdr dimensions))
                  `(list
                     ,@(loop :for i :upfrom 0 :below (car dimensions)
-                            :collect (form (apply #'aref array
-                                                  (revappend acc (list i))))))
+                            :collect (form
+                                       (apply #'aref array
+                                              (revappend acc (list i))))))
                  `(list
                     ,@(loop :for i :upfrom 0 :below (car dimensions)
                             :collect (rec (cdr dimensions) (cons i acc)))))))
