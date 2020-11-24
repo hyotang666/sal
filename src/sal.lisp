@@ -6,7 +6,7 @@
            #:load-object
            #:load-objects
            #:object-form
-           #:known-form*))
+           #:*known-form*))
 
 (in-package :sal)
 
