@@ -11,7 +11,11 @@
   :pathname
   "src/"
   :components
-  ((:file "sal")))
+  ((:file "sal"))
+  :author "SATO Shinichi"
+  :license "MIT"
+  :description "Trivial serializer. Saving object as S-Exp." 
+  )
 
 ;;; These forms below are added by JINGOH.GENERATOR.
 ;; Ensure in ASDF for pretty printings.
