@@ -157,6 +157,27 @@
 (defmethod object-form ((bit-vector bit-vector)) bit-vector)
 
 ;;; STRUCTURE
+
+(defmethod object-form ((object structure-object))
+  (let ((var (gensym "STRUCTURE")) (class (class-of object)))
+    (pushnew (cons object var) *known-form* :key #'car)
+    `(let ((,var
+            (make-instance ',(type-of object)
+                           ,@(loop :for slot :in (c2mop:class-slots class)
+                                   :for name
+                                        := (c2mop:slot-definition-name slot)
+                                   :if (slot-boundp object name)
+                                     :collect (intern (symbol-name name)
+                                                      :keyword)
+                                     :and :collect (let ((v
+                                                          (slot-value object
+                                                                      name)))
+                                                     (or (cdr
+                                                           (assoc v
+                                                                  *known-form*))
+                                                         (form v)))))))
+       ,var)))
+
 ;;; ARRAY
 ;;; STREAM
 ;;;; WRITE-OBJECT
