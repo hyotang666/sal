@@ -2,13 +2,11 @@
 
 (defpackage :sal
   (:use :cl)
-  (:export
-    #:write-object
-    #:load-object
-    #:load-objects
-    #:object-form
-    #:known-form*
-    ))
+  (:export #:write-object
+           #:load-object
+           #:load-objects
+           #:object-form
+           #:known-form*))
 
 (in-package :sal)
 
