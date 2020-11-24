@@ -40,8 +40,7 @@
   (let ((name (millet:function-name function)))
     (if name
         `#',name
-        (or (function-lambda-expression function)
-            (error "Could not make object-form. ~S" function)))))
+        (error "Could not make object-form. ~S" function))))
 
 ;;; PATHNAME
 
