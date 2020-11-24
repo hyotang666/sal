@@ -2,9 +2,12 @@
 (in-package :asdf)
 (defsystem "sal"
   :version
-  "0.0.0"
+  "1.0.0"
   :depends-on
-  nil
+  (
+   "millet" ; Wrapper for implementation dependent utilities.
+   "closer-mop" ; Wrapper for Meta-object-protocols.
+   )
   :pathname
   "src/"
   :components
