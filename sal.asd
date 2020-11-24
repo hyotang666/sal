@@ -2,7 +2,7 @@
 (in-package :asdf)
 (defsystem "sal"
   :version
-  "1.2.0"
+  "1.2.1"
   :depends-on
   (
    "millet" ; Wrapper for implementation dependent utilities.

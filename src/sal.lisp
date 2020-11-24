@@ -56,16 +56,15 @@
 ;;; CONS
 
 (defmethod object-form ((cons cons))
-  (labels ((rec (list)
-             (typecase list
-               (null `(list ,@(mapcar #'object-form cons)))
-               (atom
-                `(list* ,@(mapcar #'object-form (butlast cons))
-                        ,@(let ((cons (last cons)))
-                            `(,(object-form (car cons))
-                              ,(object-form (cdr cons))))))
-               (cons (rec (cdr list))))))
-    (rec cons)))
+  (let ((var (gensym "CONS")))
+    (pushnew (cons cons var) *known-form* :key #'car)
+    `(let ((,var
+            (cons
+              ,(or (cdr (assoc (car cons) *known-form*))
+                   (object-form (car cons)))
+              ,(or (cdr (assoc (cdr cons) *known-form*))
+                   (object-form (cdr cons))))))
+       ,var)))
 
 ;;; PACKAGE
 
