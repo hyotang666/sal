@@ -16,7 +16,7 @@
   ((:file "sal"))
   :author "SATO Shinichi"
   :license "MIT"
-  :description "Trivial serializer. Saving object as S-Exp." 
+  :description "S-Expression based object serializer."
   )
 
 ;;; These forms below are added by JINGOH.GENERATOR.

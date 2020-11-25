@@ -1,6 +1,6 @@
 # SAL 1.3.0
 ## What is this?
-Trivial serializer. Saving object as S-Exp.
+S-Expression based object serializer.
 
 ## Alternatives and differences.
 ### [CL-MARSHALL](https://github.com/wlbr/cl-marshal)
