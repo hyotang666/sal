@@ -28,7 +28,7 @@
 
 ;;; SYMBOL
 
-(defmethod object-form ((symbol symbol)) symbol)
+(defmethod object-form ((symbol symbol)) `',symbol)
 
 ;;; STRING
 
