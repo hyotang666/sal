@@ -183,9 +183,17 @@
   (let ((var (gensym "ARRAY")))
     (setf (gethash array *known-form*) var)
     `(let ((,var
-            (make-array ',(array-dimensions array)
-                        :element-type ',(array-element-type array)
-                        :adjustable ,(adjustable-array-p array)
+            (make-array ',(array-dimensions array) :element-type
+                        ',(array-element-type array) :adjustable
+                        ,(adjustable-array-p array)
+                        ,@(multiple-value-bind (displaced? offset)
+                              (array-displacement array)
+                            (when displaced?
+                              `(:displaced-to
+                                ,(or (gethash displaced? *known-form*)
+                                     (error "Displacement is out of scope. ~S"
+                                            array))
+                                :displaced-index-offset ,offset)))
                         :initial-contents ,(array-contents-form array))))
        ,var)))
 
