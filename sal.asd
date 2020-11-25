@@ -2,12 +2,13 @@
 (in-package :asdf)
 (defsystem "sal"
   :version
-  "1.2.13"
+  "1.3.0"
   :depends-on
   (
    "millet" ; Wrapper for implementation dependent utilities.
    "closer-mop" ; Wrapper for Meta-object-protocols.
    "structure-ext" ; Tiny Structure extensioin.
+   "prompt-for" ; Type safe user input.
    )
   :pathname
   "src/"

@@ -14,6 +14,10 @@
 
 (defvar *known-form* (make-hash-table :test 'eq))
 
+;;;; CONDITION
+
+(define-condition give-up (simple-error) ())
+
 ;;;; FORM
 
 (defgeneric object-form (object))
@@ -40,7 +44,16 @@
   (let ((name (millet:function-name function)))
     (if name
         `#',name
-        (error "Could not make object-form. ~S" function))))
+        (let* ((exp (function-lambda-expression function))
+               (report (format nil "Use ~S" exp)))
+          (if exp
+              (cerror report 'give-up
+                      :format-control "Could not make reloadable form. ~S"
+                      :format-arguments (list function))
+              (error 'give-up
+                     :format-control "Could not make reloadable form. ~S"
+                     :format-arguments (list function)))
+          exp))))
 
 ;;; PATHNAME
 
@@ -191,13 +204,25 @@
                             (when displaced?
                               `(:displaced-to
                                 ,(or (gethash displaced? *known-form*)
-                                     (error "Displacement is out of scope. ~S"
-                                            array))
+                                     (error 'give-up
+                                            :format-control "Displacement is out of scope. ~S"
+                                            :format-arguments (list array)))
                                 :displaced-index-offset ,offset)))
                         :initial-contents ,(array-contents-form array))))
        ,var)))
 
 ;;; STREAM
+
+(defmethod object-form ((stream stream))
+  (restart-case (error 'give-up
+                       :format-control "Could not make reloadable form for ~S"
+                       :format-arguments (list stream))
+    (use-value (symbol)
+      :report "Specify symbol."
+      :interactive
+      (lambda () (list (prompt-for:prompt-for 'symbol ">> ")))
+      symbol)))
+
 ;;;; WRITE-OBJECT
 
 (defun write-object
