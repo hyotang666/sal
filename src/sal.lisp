@@ -61,13 +61,7 @@
 
 ;;; PATHNAME
 
-(defmethod object-form ((pathname pathname))
-  `(make-pathname :host ,(object-form (pathname-host pathname))
-                  :device ,(object-form (pathname-device pathname))
-                  :directory ,(object-form (pathname-directory pathname))
-                  :name ,(object-form (pathname-name pathname))
-                  :type ,(object-form (pathname-type pathname))
-                  :version ,(object-form (pathname-version pathname))))
+(defmethod object-form ((pathname pathname)) pathname)
 
 ;;; CONS
 
