@@ -68,11 +68,13 @@
 (defmethod object-form ((cons cons))
   (let ((var (gensym "CONS")))
     (setf (gethash cons *known-form*) var)
-    `(let ((,var
-            (cons
-              ,(or (gethash (car cons) *known-form*) (object-form (car cons)))
-              ,(or (gethash (cdr cons) *known-form*)
-                   (object-form (cdr cons))))))
+    `(let ((,var (cons nil nil)))
+       (rplaca ,var
+               ,(or (gethash (car cons) *known-form*)
+                    (object-form (car cons))))
+       (rplacd ,var
+               ,(or (gethash (cdr cons) *known-form*)
+                    (object-form (cdr cons))))
        ,var)))
 
 ;;; PACKAGE
