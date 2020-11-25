@@ -76,10 +76,7 @@
   (let* ((var (gensym "HT")))
     (pushnew (cons hash-table var) *known-form* :key #'car)
     `(let ((,var
-            (make-hash-table :test ,(let ((test (hash-table-test hash-table)))
-                                      (etypecase test
-                                        (symbol `',test)
-                                        (function (object-form test))))
+            (make-hash-table :test ,(object-form (hash-table-test hash-table))
                              :size ,(hash-table-size hash-table)
                              :rehash-size ,(hash-table-rehash-size hash-table)
                              :rehash-threshold ,(hash-table-rehash-threshold
