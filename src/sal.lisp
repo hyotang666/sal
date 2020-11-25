@@ -170,10 +170,12 @@
   (labels ((rec (dimensions acc)
              (if (endp (cdr dimensions))
                  `(list
-                    ,@(loop :for i :upfrom 0 :below (car dimensions)
-                            :collect (form
-                                       (apply #'aref array
-                                              (revappend acc (list i))))))
+                    ,@(loop :with indice
+                                  := (revappend ; Do not NRECONC!
+                                                acc (list nil))
+                            :for i :upfrom 0 :below (car dimensions)
+                            :do (rplaca (last indice) i)
+                            :collect (form (apply #'aref array indice))))
                  `(list
                     ,@(loop :for i :upfrom 0 :below (car dimensions)
                             :collect (rec (cdr dimensions) (cons i acc)))))))
