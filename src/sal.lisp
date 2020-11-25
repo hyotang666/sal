@@ -12,7 +12,7 @@
 
 ;;;; SPECIAL VAR
 
-(defvar *known-form* nil)
+(defvar *known-form* (make-hash-table :test 'eq))
 
 ;;;; FORM
 
@@ -56,12 +56,11 @@
 
 (defmethod object-form ((cons cons))
   (let ((var (gensym "CONS")))
-    (pushnew (cons cons var) *known-form* :key #'car)
+    (setf (gethash cons *known-form*) var)
     `(let ((,var
             (cons
-              ,(or (cdr (assoc (car cons) *known-form*))
-                   (object-form (car cons)))
-              ,(or (cdr (assoc (cdr cons) *known-form*))
+              ,(or (gethash (car cons) *known-form*) (object-form (car cons)))
+              ,(or (gethash (cdr cons) *known-form*)
                    (object-form (cdr cons))))))
        ,var)))
 
@@ -74,7 +73,7 @@
 
 (defmethod object-form ((hash-table hash-table))
   (let* ((var (gensym "HT")))
-    (pushnew (cons hash-table var) *known-form* :key #'car)
+    (setf (gethash hash-table *known-form*) var)
     `(let ((,var
             (make-hash-table :test ,(object-form (hash-table-test hash-table))
                              :size ,(hash-table-size hash-table)
@@ -85,7 +84,7 @@
            `((setf ,@(loop :for k :being :each :hash-key :of hash-table :using
                                 (:hash-value v)
                            :collect `(gethash ,(object-form k) ,var)
-                           :collect (or (cdr (assoc v *known-form*))
+                           :collect (or (gethash v *known-form*)
                                         (object-form v))))))
        ,var)))
 
@@ -93,7 +92,7 @@
 
 (defmethod object-form ((object standard-object))
   (let ((var (gensym)) (class (class-of object)))
-    (pushnew (cons object var) *known-form* :key #'car)
+    (setf (gethash object *known-form*) var)
     `(let ((,var
             (make-instance ',(class-name class)
                            ,@(loop :for slot :in (c2mop:class-slots class)
@@ -107,9 +106,8 @@
                                        :and :collect (let ((v
                                                             (slot-value object
                                                                         name)))
-                                                       (or (cdr
-                                                             (assoc v
-                                                                    *known-form*))
+                                                       (or (gethash v
+                                                                    *known-form*)
                                                            (object-form v)))))))
        ,var)))
 
@@ -117,7 +115,7 @@
 
 (defmethod object-form ((object condition))
   (let ((var (gensym "CONDITION")) (class (class-of object)))
-    (pushnew (cons object var) *known-form* :key #'car)
+    (setf (gethash object *known-form*) var)
     `(let ((,var
             (make-condition ',(class-name class)
                             ,@(loop :for slot :in (c2mop:class-slots class)
@@ -132,9 +130,8 @@
                                         :and :collect (let ((v
                                                              (slot-value object
                                                                          name)))
-                                                        (or (cdr
-                                                              (assoc v
-                                                                     *known-form*))
+                                                        (or (gethash v
+                                                                     *known-form*)
                                                             (object-form
                                                               v)))))))
        ,var)))
@@ -147,7 +144,7 @@
 
 (defmethod object-form ((object structure-object))
   (let ((var (gensym "STRUCTURE")) (class (class-of object)))
-    (pushnew (cons object var) *known-form* :key #'car)
+    (setf (gethash object *known-form*) var)
     `(let ((,var
             (make-instance ',(type-of object)
                            ,@(loop :for slot :in (c2mop:class-slots class)
@@ -159,9 +156,8 @@
                                      :and :collect (let ((v
                                                           (slot-value object
                                                                       name)))
-                                                     (or (cdr
-                                                           (assoc v
-                                                                  *known-form*))
+                                                     (or (gethash v
+                                                                  *known-form*)
                                                          (object-form v)))))))
        ,var)))
 
@@ -185,7 +181,7 @@
 
 (defmethod object-form ((array array))
   (let ((var (gensym "ARRAY")))
-    (pushnew (cons array var) *known-form* :key #'car)
+    (setf (gethash array *known-form*) var)
     `(let ((,var
             (make-array ',(array-dimensions array)
                         :element-type ',(array-element-type array)
@@ -203,7 +199,7 @@
         ((:circle *print-circle*) *print-circle*)
         ((:gensym *print-gensym*) *print-gensym*)
         ((:readably *print-readably*) *print-readably*))
-  (let (*known-form*)
+  (let ((*known-form* (make-hash-table :test 'eq)))
     (pprint-logical-block (*standard-output* nil :prefix "#.")
       (write (object-form object)))))
 
