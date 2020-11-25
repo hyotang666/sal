@@ -2,7 +2,7 @@
 (in-package :asdf)
 (defsystem "sal.test"
   :version
-  "0.0.0"
+  "0.1.0"
   :depends-on
   (:jingoh "sal")
   :components
