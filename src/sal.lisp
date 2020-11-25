@@ -110,7 +110,7 @@
                                                        (or (cdr
                                                              (assoc v
                                                                     *known-form*))
-                                                           (form v)))))))
+                                                           (object-form v)))))))
        ,var)))
 
 ;;; CONDITION
@@ -135,7 +135,8 @@
                                                         (or (cdr
                                                               (assoc v
                                                                      *known-form*))
-                                                            (form v)))))))
+                                                            (object-form
+                                                              v)))))))
        ,var)))
 
 ;;; BIT-VECTOR
@@ -161,7 +162,7 @@
                                                      (or (cdr
                                                            (assoc v
                                                                   *known-form*))
-                                                         (form v)))))))
+                                                         (object-form v)))))))
        ,var)))
 
 ;;; ARRAY
@@ -175,7 +176,8 @@
                                                 acc (list nil))
                             :for i :upfrom 0 :below (car dimensions)
                             :do (rplaca (last indice) i)
-                            :collect (form (apply #'aref array indice))))
+                            :collect (object-form
+                                       (apply #'aref array indice))))
                  `(list
                     ,@(loop :for i :upfrom 0 :below (car dimensions)
                             :collect (rec (cdr dimensions) (cons i acc)))))))
