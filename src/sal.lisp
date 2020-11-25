@@ -218,9 +218,8 @@
                        :format-control "Could not make reloadable form for ~S"
                        :format-arguments (list stream))
     (use-value (symbol)
-      :report "Specify symbol."
-      :interactive
-      (lambda () (list (prompt-for:prompt-for 'symbol ">> ")))
+        :report "Specify symbol."
+        :interactive (lambda () (list (prompt-for:prompt-for 'symbol ">> ")))
       symbol)))
 
 ;;;; WRITE-OBJECT
