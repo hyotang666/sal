@@ -43,7 +43,11 @@
 (defmethod object-form ((function function))
   (let ((name (millet:function-name function)))
     (if name
-        `#',name
+        (if (fboundp name)
+            `#',name
+            (error 'give-up
+                   :format-control "Could not make reloadable form. ~S"
+                   :format-arguments (list function)))
         (let* ((exp (function-lambda-expression function))
                (report (format nil "Use ~S" exp)))
           (if exp
